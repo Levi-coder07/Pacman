@@ -68,6 +68,10 @@
         "xlocmes": "cpp",
         "xlocmon": "cpp",
         "xloctime": "cpp",
-        "cerrno": "cpp"
+        "cerrno": "cpp",
+        "ftdebug.h": "c",
+        "map": "cpp",
+        "random": "cpp",
+        "xtree": "cpp"
     }
 }
