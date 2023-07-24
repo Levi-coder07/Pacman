@@ -23,6 +23,7 @@ private:
     int steps;
     double radius;
 public:
+    int pointCounter;
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
 

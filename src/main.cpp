@@ -157,9 +157,11 @@ int main()
 	ghost.position = glm::vec3(-0.7f,-0.7f, 0.0f);
 	*/
 	// Main while loop
-	TextRenderer text_renderer= TextRenderer(800,800);;
+	std::string points ;
+	TextRenderer text_renderer= TextRenderer(800,800);
     text_renderer.Load("C:\\Users\\Levi\\Downloads\\Pacman_Final\\fonts\\OCRAEXT.TTF", 24);
 	glEnable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
 	while (!glfwWindowShouldClose(window))
 	{
@@ -205,7 +207,7 @@ int main()
 
 	ourShader.Delete();
 	texShader.Delete();
-	
+	text_rendShader.Delete();
 	// Delete window before ending the program
 	glfwDestroyWindow(window);
 	// Terminate GLFW before ending the program

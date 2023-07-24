@@ -40,6 +40,7 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
     FT_Set_Pixel_Sizes(face, 0, fontSize);
     // disable byte-alignment restriction
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
+    FT_GlyphSlot slot = face->glyph;
     // then for the first 128 ASCII characters, pre-load/compile their characters and store them
     for (GLubyte c = 0; c < 128; c++) // lol see what I did there 
     {
@@ -50,6 +51,7 @@ void TextRenderer::Load(std::string font, unsigned int fontSize)
             continue;
         }
         // generate texture
+        FT_Render_Glyph(slot, FT_RENDER_MODE_SDF);
         unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -89,8 +91,10 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, S
 {
     // activate corresponding render state	
     TextShader.use();
-    
+    glm::mat4 model = glm::mat4(1.0f);
+    TextShader.setMat4("model", model);
     glUniform3f(glGetUniformLocation(TextShader.ID, "textColor"), color.x, color.y, color.z);
+
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(this->VAO);
     
@@ -106,7 +110,7 @@ void TextRenderer::RenderText(std::string text, float x, float y, float scale, S
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
         // update VBO for each character
-        float vertices[6][4] = {
+         float vertices[6][4] = {
             { xpos,     ypos + h,   0.0f, 0.0f },            
             { xpos,     ypos,       0.0f, 1.0f },
             { xpos + w, ypos,       1.0f, 1.0f },

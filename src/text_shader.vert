@@ -6,6 +6,13 @@ uniform mat4 model;
 uniform mat4 camMatrix;
 void main()
 {
-    gl_Position =  projection * vec4(vertex.xy, 0.0, 1.0);
-    TexCoords = vertex.zw;
+    if(vertex.xy.y>10){
+        gl_Position = projection* vec4(vertex.xy, 0.0f, 1.0f);
+        TexCoords = vertex.zw;
+    }else{
+        gl_Position = camMatrix * model* vec4(vertex.xy, 1.0f, 1.0f);
+        TexCoords = vertex.zw;
+    }
+    
+   
 }

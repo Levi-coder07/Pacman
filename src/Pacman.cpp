@@ -2,7 +2,7 @@
 
 Pacman::Pacman(double radius_, int steps_)
 {
-
+    this->pointCounter = 0;
     this->radius = radius_;
     this->steps = steps_;
     this->vertices.resize((steps + 1) * (steps / 2 - 1) + 3);
@@ -198,7 +198,7 @@ void Pacman::draw(Shader &shaderProgram)
 
     double  timeValue = glfwGetTime();
     int change =  (steps + 1) * 3 - 3 * (int)(sin(timeValue * 20) * (steps / 12) + (steps / 12) + 1);
-    shaderProgram.setFloat4("ourColor",  1.0f, 0.8f, 0.0f, 1.0f);
+    shaderProgram.setFloat4("ourColor",  1.0f, 1.0f, 0.0f, 1.0f);
     glDrawElements(GL_TRIANGLES, change - ((steps + 1) * 3 - change), GL_UNSIGNED_INT, (void*)(((steps + 1) * 3 - change) * sizeof(float)));
 
     for (int i = 0; i < (steps / 2 - 2); i++)

@@ -28,16 +28,19 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 {
     camera.process_input(window);
 	camera.updateMatrix(45.f, 0.1f, 100.f);
-
+	
 	camera.Matrix(color_shader, "camMatrix");
 	camera.Matrix(texture_shader, "camMatrix");
 	camera.Matrix(text_shader,"camMatrix");
 	
 	this->pacman->updateInput(window);
-
     this->pacman->draw(color_shader);
     this->map->draw(texture_shader);
-
+	
+	std::string label = "POINTS : " + std::to_string(pacman->pointCounter);
+	glDepthMask(GL_FALSE); // Don't write into the depth buffer
+	text_renderer->RenderText(label, 15.f, 15.0f, 2.5f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+	glDepthMask(GL_TRUE); // Re-enable writing to the depth buffer
     for (int i = 0; i < food_vector.size(); i++) 
 		{
 			// Render the ball
@@ -52,11 +55,12 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 				{
 					
 					std::cout << "COLISION" << std::endl;
+					pacman->pointCounter++;
 					food_vector[i]->is_eaten = true;
 				}
 			}
 			else{
-				text_renderer->RenderText( "GAME OVER", 1.0f, 50.0f, 5.0f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+				text_renderer->RenderText( "GAME OVER", 0.0f, 0.0f, 0.025f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
 			}
 		}
 		
