@@ -73,5 +73,6 @@
         "map": "cpp",
         "random": "cpp",
         "xtree": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "C:/Users/Levi/Downloads/Pacman_Final/include"
 }

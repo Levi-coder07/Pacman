@@ -10,6 +10,8 @@
 #include <cerrno>
 #include <vector>
 #include <random>
+#include <time.h>
+#include <stdlib.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <GLFW/glfw3.h>
@@ -21,20 +23,23 @@ class Ghost
 {
 private:
     int steps;
-    double radius;
+    
+    float speed;
+
+    std::vector<int> prev_mov;
 public:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
 
 	VAO vao;
-
+    bool touched;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
-
-	Ghost(double radius_, int steps_);
+    double radius;
+	Ghost(double radius_, int steps_, float x, float y);
     ~Ghost();
-	void updateInput(GLFWwindow * window);
+	void move(std::vector<std::string> matrix, float map_size);
     void draw(Shader &shaderProgram);
 
 };

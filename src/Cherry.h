@@ -1,5 +1,5 @@
-#ifndef PACMAN_CLASS_H
-#define PACMAN_CLASS_H
+#ifndef CHERRY_CLASS_H
+#define CHERRY_CLASS_H
 
 #include <glm/glm.hpp>
 #include <glad/glad.h>
@@ -17,32 +17,24 @@
 #include "VAO.h"
 #include "EBO.h"
 
-class Pacman
+class Cherry
 {
 private:
     int steps;
-    
-
-    
+    double radius;
 public:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    double radius;
-    int pointCounter;
-    float speed;
-    float speedX;
-    float speedY;
+
 	VAO vao;
 
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
 
-	Pacman(double radius_, int steps_);
-    int get_vertices_size();
-    int get_indices_size();
-    ~Pacman();
-	void updateInput(GLFWwindow * window);
+	bool is_eaten;
+	Cherry(double radius_, int steps_, float x, float y);
+    ~Cherry();
     void draw(Shader &shaderProgram);
 };
 

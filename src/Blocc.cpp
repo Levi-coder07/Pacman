@@ -3,7 +3,7 @@
 Blocc::Blocc(double size_, float angle, float x, float y)
 {
     this->size = size_;
-
+    this->centerPoint = glm::vec3(0.f,0.f,0.f);
     this->vertices.resize(24);
     this->indices.resize(36);
 
@@ -13,22 +13,22 @@ Blocc::Blocc(double size_, float angle, float x, float y)
 
 
     // Cuadrado superior
-    this->vertices[0].pos = glm::vec3(size + x, size + y, size);
-    this->vertices[1].pos = glm::vec3(- size + x, size + y, size); 
-    this->vertices[2].pos = glm::vec3(size + x, -size + y, size); 
-    this->vertices[3].pos = glm::vec3(- size + x, -size + y, size);
+    this->vertices[0].pos = glm::vec3(size + x, size + y, size);//
+    this->vertices[1].pos = glm::vec3(- size + x, size + y, size); //
+    this->vertices[2].pos = glm::vec3(size + x, -size + y, size); //
+    this->vertices[3].pos = glm::vec3(- size + x, -size + y, size);//
 
     // Cuadrado lateral
     this->vertices[4].pos = glm::vec3(- size + x, size + y, size);
     this->vertices[5].pos = glm::vec3(size + x, size + y, size);
-    this->vertices[6].pos = glm::vec3(- size + x, size + y, -size); 
-    this->vertices[7].pos = glm::vec3(size + x, size + y, -size); 
+    this->vertices[6].pos = glm::vec3(- size + x, size + y, -size); //
+    this->vertices[7].pos = glm::vec3(size + x, size + y, -size); //
 
     // Cuadrado lateral 2
     this->vertices[8].pos = glm::vec3(size + x, -size + y, size); 
     this->vertices[9].pos = glm::vec3(- size + x, -size + y, size);
-    this->vertices[10].pos = glm::vec3(size + x, -size + y, -size); 
-    this->vertices[11].pos = glm::vec3(-size + x, -size + y, -size);
+    this->vertices[10].pos = glm::vec3(size + x, -size + y, -size); //
+    this->vertices[11].pos = glm::vec3(-size + x, -size + y, -size);//
 
     // Cuadrado lateral 3
     this->vertices[12].pos = glm::vec3(- size + x, size + y, size); 
@@ -47,8 +47,46 @@ Blocc::Blocc(double size_, float angle, float x, float y)
     this->vertices[21].pos = glm::vec3(- size + x, size + y, -size); 
     this->vertices[22].pos = glm::vec3(size + x, -size + y, -size); 
     this->vertices[23].pos = glm::vec3(-size + x, -size + y, -size);
+    
+    for (int i = 0; i < 4; i++)
+    {   
+        
+        this->centerPoint.x = this->centerPoint.x + this->vertices[i].pos.x;
+         this->centerPoint.y = this->centerPoint.y + this->vertices[i].pos.y;
+          this->centerPoint.z = this->centerPoint.z + this->vertices[i].pos.z;
+    }
+    for (int i = 6; i < 12; i+=4)
+    {   
+        
+        
+        this->centerPoint.x = this->centerPoint.x + this->vertices[i].pos.x;
+         this->centerPoint.y = this->centerPoint.y + this->vertices[i].pos.y;
+          this->centerPoint.z = this->centerPoint.z + this->vertices[i].pos.z;
+        //std::cout<<this->centerPoint.x<<std::endl;
+          this->centerPoint.x = this->centerPoint.x + this->vertices[i+1].pos.x;
+         this->centerPoint.y = this->centerPoint.y + this->vertices[i+1].pos.y;
+          
+          this->centerPoint.z = this->centerPoint.z + this->vertices[i+1].pos.z;
 
+         //std::cout<<this->vertices[i].pos.x<<" "<<this->vertices[i+1].pos.x<<std::endl;
+    }
 
+    //this->centerPoint.x = this->centerPoint.x + this->vertices[6].pos.x+ this->vertices[7].pos.x+ this->vertices[10].pos.x+ this->vertices[11].pos.x;
+    //this->centerPoint.y = this->centerPoint.y + this->vertices[6].pos.y+ this->vertices[7].pos.y+ this->vertices[10].pos.y+ this->vertices[11].pos.y;
+    
+    if (std::abs(this->centerPoint.z) < 1e-6) {
+        this->centerPoint.z = 0.0;
+}
+    // this->centerPoint.z = this->centerPoint.z + this->vertices[6].pos.z;
+    this->centerPoint = this->centerPoint / 8.f;
+   
+    //+ this->vertices[7].pos.z+ this->vertices[10].pos.z+ this->vertices[11].pos.z
+    //this->centerPoint.z = 0;
+        
+    
+    /*std::cout<<this->centerPoint.x<<" ";
+    std::cout<<this->centerPoint.y<<" ";
+    std::cout<<this->centerPoint.z<<std::endl;*/
     for (int i = 0; i < 24; i++)
     {
         this->vertices[i].color = glm::vec3(1.0f, 1.0f, 1.0f);

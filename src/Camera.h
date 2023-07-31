@@ -16,8 +16,8 @@ class Camera
 public:
 	// Stores the main vectors of the camera
 	glm::vec3 position;
-	glm::vec3 orientation = glm::vec3(0.0f, -0.707f, -0.707f);
-	glm::vec3 up = glm::vec3(0.0f, 0.707f, -0.707f);
+	glm::vec3 orientation = glm::vec3(0.0f, 0.707f, -0.707f);
+	glm::vec3 up = glm::vec3(0.0f, 0.707f, 0.707f);
 	glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
 	// Prevents the camera from jumping around when first clicking left click
