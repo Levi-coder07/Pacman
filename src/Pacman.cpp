@@ -113,41 +113,47 @@ Pacman::~Pacman()
 {
     
 }
-void Pacman::updateInput(GLFWwindow * window)
+bool Pacman::CheckColission(std::vector<Blocc*> &blocks,glm::vec3 direction){
+    bool touch = true;
+    for(int i =0;i<blocks.size();i++){
+            if(glm::distance(blocks[i]->centerPoint,this->position+direction)<=this->radius+0.2)
+            {
+                touch = false;
+            }
+
+        }
+    return touch;
+}
+void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks)
 {
-    if (glfwGetKey(window,GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        rotation.y += 0.1f;
-    }
-    if (glfwGetKey(window,GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        rotation.y -= 0.1f;
-    }
-    if (glfwGetKey(window,GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-        rotation.x += 0.1f;
-    }
-    if (glfwGetKey(window,GLFW_KEY_LEFT) == GLFW_PRESS)
-    {
-        rotation.x -= 0.1f;
-    }
-    if (glfwGetKey(window,GLFW_KEY_F) == GLFW_PRESS)
-    {
-        rotation.z += 0.1f;
-    }
-    if (glfwGetKey(window,GLFW_KEY_G) == GLFW_PRESS)
-    {
-        rotation.z -= 0.1f;
-    }
+
     if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
     {
-        position.x -= speedX;
-        rotation = glm::vec3(0.f, 0.f, 180.f);
+        glm::vec3 direction(-speedX,0,0);
+        bool touch = this->CheckColission(blocks,direction);
+        
+        if(touch){
+            position.x -= speedX;
+            rotation = glm::vec3(0.f, 0.f, 180.f);
+        }else{
+            position.x -= 0;
+            rotation = glm::vec3(0.f, 0.f, 180.f);
+        }
+        
     }
     else if (glfwGetKey(window,GLFW_KEY_D) == GLFW_PRESS)
     {
-        position.x += speedX;
-        rotation = glm::vec3(0.f, 0.f, 0.f);
+         glm::vec3 direction(speedX,0,0);
+        bool touch = this->CheckColission(blocks,direction);
+        
+        if(touch){
+            position.x += speedX;
+            rotation = glm::vec3(0.f, 0.f, 0.f);
+        }else{
+            position.x += 0;
+            rotation = glm::vec3(0.f, 0.f, 0.f);
+        }
+        
     }
     else if (glfwGetKey(window,GLFW_KEY_Y) == GLFW_PRESS)
     {

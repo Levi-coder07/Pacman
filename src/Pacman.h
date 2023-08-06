@@ -16,7 +16,7 @@
 #include "Shader.h"
 #include "VAO.h"
 #include "EBO.h"
-
+#include "Blocc.h"
 class Pacman
 {
 private:
@@ -42,8 +42,9 @@ public:
     int get_vertices_size();
     int get_indices_size();
     ~Pacman();
-	void updateInput(GLFWwindow * window);
+	void updateInput(GLFWwindow * window,std::vector<Blocc*> blocks);
     void draw(Shader &shaderProgram);
+    bool CheckColission(std::vector<Blocc*> &blocks,glm::vec3 direction);
 };
 
 #endif

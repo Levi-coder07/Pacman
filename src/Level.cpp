@@ -37,8 +37,8 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	camera.Matrix(texture_shader, "camMatrix");
 	camera.Matrix(text_shader,"camMatrix");
 
-
-	this->pacman->updateInput(window);
+	
+	this->pacman->updateInput(window,map->blocks,map->map_size);
 
     this->pacman->draw(color_shader);
     this->map->draw(texture_shader);
@@ -47,22 +47,6 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	glDepthMask(GL_FALSE); // Don't write into the depth buffer
 	text_renderer->RenderText(label, 15.f, 15.0f, 2.5f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
 	glDepthMask(GL_TRUE); // Re-enable writing to the depth buffer
-	glm::vec3 previousPosition = pacman->position;
-	for (int i = 0; i < map->blocks.size(); i++)
-	{
-		if(!map->blocks[i]->touched){
-			double distancia = glm::distance(map->blocks[i]->centerPoint,pacman->position);
-			if (distancia <= pacman->radius + map->map_size)
-			{
-				
-				std::cout << "COLISION CON MURO" << std::endl;
-				pacman->speedX = 0;
-				
-			}
-			
-		}
-	}
-	
 	for (int i = 0; i < ghosts.size(); i++)
 	{
 		ghosts[i]->move(this->map->matrix, this->map->map_size);
