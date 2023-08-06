@@ -38,7 +38,7 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	camera.Matrix(text_shader,"camMatrix");
 
 	
-	this->pacman->updateInput(window,map->blocks,map->map_size);
+	this->pacman->updateInput(window,map->blocks);
 
     this->pacman->draw(color_shader);
     this->map->draw(texture_shader);
