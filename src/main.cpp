@@ -134,7 +134,7 @@ int main()
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+	bool startGame = false;
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -145,8 +145,11 @@ int main()
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		// Tell OpenGL which Shader Program we want to use
-
+		
+		
 		level1.render_level(window, ourShader, texShader, text_rendShader, camera);
+		
+		
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 	}

@@ -120,7 +120,6 @@ bool Pacman::CheckColission(std::vector<Blocc*> &blocks,glm::vec3 direction){
             {
                 touch = false;
             }
-
         }
     return touch;
 }
@@ -167,13 +166,30 @@ void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks)
     }
     else if (glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
     {
-        position.y += speedY;
-        rotation = glm::vec3(0.f, 0.f, 90.f);
+         glm::vec3 direction(0,speedY,0);
+        bool touch = this->CheckColission(blocks,direction);
+        
+        if(touch){
+             position.y += speedY;
+         rotation = glm::vec3(0.f, 0.f, 90.f);
+        }else{
+            position.y += 0;
+            rotation = glm::vec3(0.f, 0.f, 90.f);
+        }
+       
     }
     else if (glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
     {
-        position.y -= speedY;
-        rotation = glm::vec3(0.f, 0.f, -90.f);
+         glm::vec3 direction(0,-speedY,0);
+        bool touch = this->CheckColission(blocks,direction);
+        
+        if(touch){
+             position.y -= speedY;
+         rotation = glm::vec3(0.f, 0.f, 90.f);
+        }else{
+            position.y -= 0;
+            rotation = glm::vec3(0.f, 0.f, 90.f);
+        }
     }
 }
 void Pacman::draw(Shader &shaderProgram)

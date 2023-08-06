@@ -17,7 +17,7 @@ public:
     std::vector<Food*> food_vector;
     std::vector<Ghost*> ghosts;
     TextRenderer* text_renderer;
-
+    bool startGame = false;
     bool game_over;
 
     Level(glm::vec3 start_pos, std::vector<std::string> matrix);

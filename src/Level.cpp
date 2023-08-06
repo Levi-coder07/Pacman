@@ -37,7 +37,13 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	camera.Matrix(texture_shader, "camMatrix");
 	camera.Matrix(text_shader,"camMatrix");
 
-	
+	/*if(!startGame){
+
+		text_renderer->RenderText("GAME OVER",0,0, 0.025f,texture_shader, glm::vec3(1.0f, .0f, 0.0f));
+		if(glfwGetKey(window,GLFW_KEY_P)==GLFW_PRESS){
+			startGame=true;
+		}
+	}*/
 	this->pacman->updateInput(window,map->blocks);
 
     this->pacman->draw(color_shader);
