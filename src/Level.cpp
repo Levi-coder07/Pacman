@@ -112,6 +112,30 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 			camera.position.x = pacman->position.x;
 			camera.position.y = pacman->position.y - 3.0f;
 		}
+	}else if(pacman->pointCounter>=20){
+		camera.position.x = 0.5;
+		camera.position.y = -2.5f;
+		text_renderer->RenderText("CONGRATS", -0.8, 0.4f, 0.025f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("YOU WIN!", -0.8, -1.1f, 0.025f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		
+		text_renderer->RenderText("PRESS R TO CONTINUE!", -0.4, -1.3f, 0.005f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		if(glfwGetKey(window,GLFW_KEY_R)==GLFW_PRESS){
+			instruccion=false;
+			start_game=false;
+			game_over=false;
+			for (int i = 0; i < food_vector.size(); i++)
+			{
+				food_vector[i]->is_eaten = false;
+			}
+			for (int i = 0; i < cherries.size(); i++)
+			{
+				cherries[i]->is_eaten = false;
+			}
+			pacman->pointCounter = 0;
+			pacman->position = start_pos;
+			camera.position.x = pacman->position.x;
+			camera.position.y = pacman->position.y - 3.0f;
+		}
 	}
 	else
 	{
