@@ -8,13 +8,18 @@ Pacman::Pacman(double radius_, int steps_)
     this->speed = 0.01;
     this->speedX = 0.01;
     this->speedY = 0.01;
+
     this->vertices.resize((steps + 1) * (steps / 2 - 1) + 3);
     this->indices.resize(((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * (steps / 2 - 1) * 3) + steps * 3 + 3);
-
-    this->position = glm::vec3(0.4f,0.4f,0.f);
+    this->powerup_max_timer = 2500.f;
+    this->powerup_timer = 0.0f;
+    this->in_powerup = false;
+    this->going_powerup = false;
+    this->leaving_powerup = false;
+    this->position = glm::vec3(0.f);
     this->rotation = glm::vec3(0.f);
     this->scale = glm::vec3(1.f);
-    
+
     const float angle = 3.1415926 * 2.f / steps;
     vertices[0].pos.x = radius * sin(0); 
     vertices[0].pos.y = -radius * cos(0); 
@@ -101,63 +106,77 @@ Pacman::Pacman(double radius_, int steps_)
     vbo.Unbind();
     ebo.Unbind();
 }
-int Pacman::get_vertices_size()
-{
-    return this->vertices.size();
-}
-int Pacman::get_indices_size()
-{
-    return this->indices.size();
-}
 Pacman::~Pacman() 
 {
     
 }
-bool Pacman::CheckColission(std::vector<Blocc*> &blocks,glm::vec3 direction){
-    bool touch = true;
-    glm::vec3 HalfExtents = glm::vec3(0.2f,0.2f,0.2f);
-    for(int i =0;i<blocks.size();i++){
-        glm::vec3 difference = (this->position + direction) - blocks[i]->centerPoint;
-        glm::vec3 clamped = glm::clamp(difference,-HalfExtents,HalfExtents);
-        glm::vec3 closest = blocks[i]->centerPoint + clamped;
-        difference = closest - (this->position + direction);
-        if(glm::length(difference) <= this->radius)
-        {
-                touch = false;
-        }
-        }
-    return touch;
-}
-void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks)
-{
 
+void Pacman::activate_powerup()
+{
+    this->in_powerup = true;
+    this->going_powerup = true;
+}
+
+void Pacman::disable_powerup()
+{
+    this->in_powerup = false;
+    this->leaving_powerup = true;
+}
+
+bool Pacman::check_colission(std::vector<Blocc*> &blocks,glm::vec3 direction, float map_size)
+{
+    bool touch = true;
+    glm::vec3 half_extents = glm::vec3(map_size, map_size, map_size);
+    for(int i = 0; i < blocks.size(); i++)
+    {
+        glm::vec3 difference = (this->position + direction) - blocks[i]->center_point;
+        glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
+        glm::vec3 closest = blocks[i]->center_point + clamped;
+        difference = closest - (this->position + direction);
+        if(glm::length(difference) <= (this->radius * this->scale.x))
+        {
+            touch = false;
+        }
+    }
+    return touch;
+}   
+
+void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks, float map_size, Camera & camera)
+{
+    glm::vec3 direction(0.0f, 0.0f, 0.0f);
+    if (glfwGetKey(window,GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        rotation.y += 0.1f;
+    }
+    if (glfwGetKey(window,GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        rotation.y -= 0.1f;
+    }
+    if (glfwGetKey(window,GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        rotation.x += 0.1f;
+    }
+    if (glfwGetKey(window,GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        rotation.x -= 0.1f;
+    }
+    if (glfwGetKey(window,GLFW_KEY_F) == GLFW_PRESS)
+    {
+        rotation.z += 0.1f;
+    }
+    if (glfwGetKey(window,GLFW_KEY_G) == GLFW_PRESS)
+    {
+        rotation.z -= 0.1f;
+    }
     if (glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
     {
-        glm::vec3 direction(-speedX,0,0);
-        bool touch = this->CheckColission(blocks,direction);
-        
-        if(touch){
-            position.x -= speedX;
-            rotation = glm::vec3(0.f, 0.f, 180.f);
-        }else{
-            position.x -= 0;
-            rotation = glm::vec3(0.f, 0.f, 180.f);
-        }
-        
+        direction = glm::vec3(-speed, 0.0f, 0.0f);
+        rotation = glm::vec3(0.f, 0.f, 180.f);
     }
     else if (glfwGetKey(window,GLFW_KEY_D) == GLFW_PRESS)
     {
-        glm::vec3 direction(speedX,0,0);
-        bool touch = this->CheckColission(blocks,direction);
-        
-        if(touch){
-            position.x += speedX;
-            rotation = glm::vec3(0.f, 0.f, 0.f);
-        }else{
-            position.x += 0;
-            rotation = glm::vec3(0.f, 0.f, 0.f);
-        }
-        
+        direction = glm::vec3(speed, 0.0f, 0.0f);
+        rotation = glm::vec3(0.f, 0.f, 0.f);
     }
     else if (glfwGetKey(window,GLFW_KEY_Y) == GLFW_PRESS)
     {
@@ -171,36 +190,73 @@ void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks)
     }
     else if (glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
     {
-         glm::vec3 direction(0,speedY,0);
-        bool touch = this->CheckColission(blocks,direction);
-        
-        if(touch){
-             position.y += speedY;
-         rotation = glm::vec3(0.f, 0.f, 90.f);
-        }else{
-            position.y += 0;
-            rotation = glm::vec3(0.f, 0.f, 90.f);
-        }
-       
+        direction = glm::vec3(0.0f, speed, 0.0f);
+        rotation = glm::vec3(0.f, 0.f, 90.f);
     }
     else if (glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
     {
-       
-         glm::vec3 direction(0,-speedY,0);
-        bool touch = this->CheckColission(blocks,direction);
-        
-        if(touch){
-             position.y -= speedY;
-         rotation = glm::vec3(0.f, 0.f, -90.f);
-        }else{
-            position.y -= 0;
-            rotation = glm::vec3(0.f, 0.f,-90.f);
+        direction = glm::vec3(0.0f, -speed, 0.0f);
+        rotation = glm::vec3(0.f, 0.f, -90.f);
+    }
+
+    if (direction != glm::vec3(0.0f, 0.0f, 0.0f))
+    {
+        bool touch = this->check_colission(blocks, direction, map_size);
+        if (touch)
+        {
+            position.x += direction.x;
+            position.y += direction.y;
+            camera.position.x += direction.x;
+            camera.position.y += direction.y;
         }
     }
 }
 void Pacman::draw(Shader &shaderProgram)
 {
     shaderProgram.use();
+
+    if (this->in_powerup)
+    {
+        if (this->powerup_timer >= this->powerup_max_timer)
+        {
+            this->powerup_timer = 0.f;
+            this->disable_powerup();
+        }
+        else 
+        {
+            this->powerup_timer += 0.1f;
+        }
+    }
+
+    if (this->going_powerup)
+    {
+        if (this->scale.x < 2.f)
+        {
+            this->scale.x += 0.001f;
+            this->scale.y += 0.001f;
+            this->scale.z += 0.001f;
+        }
+        else
+        {
+            this->scale = glm::vec3(2.f,2.f,2.f);
+            this->going_powerup = false;
+        }
+    }
+
+    if (this->leaving_powerup)
+    {
+        if (this->scale.x > 1.f)
+        {
+            this->scale.x -= 0.001f;
+            this->scale.y -= 0.001f;
+            this->scale.z -= 0.001f;
+        }
+        else
+        {
+            this->scale = glm::vec3(1.f,1.f,1.f);
+            this->leaving_powerup = false;
+        }
+    }
 
     // create transformations
     glm::mat4 model = glm::mat4(1.0f);
@@ -216,7 +272,10 @@ void Pacman::draw(Shader &shaderProgram)
 
     double  timeValue = glfwGetTime();
     int change =  (steps + 1) * 3 - 3 * (int)(sin(timeValue * 20) * (steps / 12) + (steps / 12) + 1);
-    shaderProgram.setFloat4("ourColor",  1.0f, 0.8f, 0.0f, 1.0f);
+    
+    
+    if (!this->in_powerup) shaderProgram.setFloat4("ourColor",  1.0f, 0.8f, 0.0f, 1.0f);
+    else shaderProgram.setFloat4("ourColor",  1.0f, sin(glfwGetTime() * 10) + 1.f, 0.0f, 1.0f);
     glDrawElements(GL_TRIANGLES, change - ((steps + 1) * 3 - change), GL_UNSIGNED_INT, (void*)(((steps + 1) * 3 - change) * sizeof(float)));
 
     for (int i = 0; i < (steps / 2 - 2); i++)

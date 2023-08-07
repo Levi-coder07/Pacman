@@ -15,15 +15,18 @@
 #include "Camera.h"
 #include "Level.h"
 #include "text_renderer.h"
+#include "Cherry.h"
+//C:\Users\Levi\Downloads\Pacman_Final
+const char * vertex_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\src\\shader.vert";
+const char * fragment_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\src\\shader.frag";
 
-const char * vertex_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\shader.vert";
-const char * fragment_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\shader.frag";
+const char * vertex_texshader_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\src\\texshader.vert";
+const char * fragment_texshader_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\src\\texshader.frag";
 
-const char * vertex_texshader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\texshader.vert";
-const char * fragment_texshader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\texshader.frag";
+const char * vertex_text_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\src\\text_shader.vert";
+const char * fragment_text_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\src\\text_shader.frag";
 
-const char * vertex_text_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\text_shader.vert";
-const char * fragment_text_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\text_shader.frag";
+const char * font_file = "C:\\Users\\Levi\\Downloads\\Pacman_final\\fonts\\OCRAEXT.TTF";
 
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 1000;
@@ -74,82 +77,41 @@ int main()
     glUniformMatrix4fv(glGetUniformLocation(text_rendShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	
 	Camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0.0f, -3.0f, 3.f));
-	/*
-	std::vector<std::string> matrix =
-	{{"b---a| |b---a"},
-	 {"|   || ||   |"},
-	 {"| | cd cd | |"},
-	 {"|           |"},
-	 {"| | b-----a |"},
-	 {"| | |b---a| |"},
-	 {"| | ||ba || |"},
-	 {"| | |cd| || |"},
-	 {"| | c--d cd |"},
-	 {"|           |"},
-	 {"|   b---a | |"},
-	 {"c-- |b-a| | |"},
-	 {"|   |c-d| | |"},
-	 {"| | c---d | |"},
-	 {"| |       | |"},
-	 {"| | b---a | |"},
-	 {"| | |b-a| | |"},
-	 {"| | |c-d| | |"},
-	 {"| | c---d | |"},
-	 {"|           |"},
-	 {"|   | b-a | |"},
-	 {"|-  | | | | |"},
-	 {"|  -| | | | |"},
-	 {"|-  | c-d | |"},
-	 {"|           |"},
-	 {"| | b-----a |"},
-	 {"| | c-----d |"},
-	 {"| |         |"},
-	 {"| | b---a | |"},
-	 {"| | |ba | | |"},
-	 {"|   ||| |   |"},
-	 {"| | cdc-d | |"},
-	 {"| |       | |"},
-	 {"|   ba ba   |"},
-	 {"c---d| |c---d"},
-	};*/
-
+	
 	std::vector<std::string> matrix =
 	{{"####### ######"},
-	 {"#....##.##...#"},
+	 {"#.o..##.##...#"},
 	 {"#.##.##.##.#.#"},
 	 {"#.##..@..#...#"},
 	 {"#.##.#.#...#.#"},
 	 {"#.##.#.#.#.#@#"},
 	 {"#.##.##.####.#"},
-	 {"#.##.#...###.#"},
+	 {"#.##.#.*.###.#"},
 	 {"#....@.#...#.#"},
 	 {"##############"},
 	};	
 
-	Level level1(glm::vec3(0.4f, 0.4f, 0.0f), matrix);
+	Level level1(matrix, camera);
 
-	std::string points ;
-	TextRenderer text_renderer= TextRenderer(SCR_HEIGHT,SCR_WIDTH);
-    text_renderer.Load("C:\\Users\\Levi\\Downloads\\Pacman_Final\\fonts\\OCRAEXT.TTF", 24);
+	std::string points;
+	TextRenderer text_renderer= TextRenderer(800,800);
+    text_renderer.Load(font_file, 24);
 	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	bool startGame = false;
+	
 	// Main while loop
 	while (!glfwWindowShouldClose(window))
 	{
 		// Take care of all GLFW events
 		glfwPollEvents();
 		// Specify the color of the background
-		glClearColor(0.f, 0.f, 0.f, 1.0f);
+		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		// Tell OpenGL which Shader Program we want to use
-		
-		
+
 		level1.render_level(window, ourShader, texShader, text_rendShader, camera);
-		
-		
 		// Swap the back buffer with the front buffer
 		glfwSwapBuffers(window);
 	}

@@ -4,8 +4,8 @@ Food::Food(double radius_, int steps_, float x, float y)
 {
     this->radius = radius_;
     this->steps = steps_;
-    this->vertices.resize((steps + 1) * (steps / 2 - 1) + 3);
-    this->indices.resize(((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * (steps / 2 - 1) * 3) + steps * 3 + 3);
+    this->vertices.resize((steps + 1) * (steps / 2 - 1) + 2);
+    this->indices.resize((steps + 1) * 3 + (((steps / 2) - 1 - 1) * (steps + 1) * 6) + steps * 3 + 3);
 
     this->position = glm::vec3(0.f);
     position.x = x;
@@ -43,20 +43,11 @@ Food::Food(double radius_, int steps_, float x, float y)
     vertices[1 + ((steps + 1) * (steps / 2 - 1))].pos.y = -radius * cos(angle * (steps / 2)); 
     vertices[1 + ((steps + 1) * (steps / 2 - 1))].pos.z = 0.0f;
 
-    vertices[1 + ((steps + 1) * (steps / 2 - 1)) + 1].pos.x = 0.0f;
-    vertices[1 + ((steps + 1) * (steps / 2 - 1)) + 1].pos.y = 0.0f; 
-    vertices[1 + ((steps + 1) * (steps / 2 - 1)) + 1].pos.z = 0.0f;
-
     for (int i = 0; i <= steps; i++)
     {
         indices[i * 3] = 0;
         indices[i * 3 + 1] = i + 1;  
         indices[i * 3 + 2] = i + 2;
-
-        indices[((steps + 1) * (steps / 2 - 1) * 6) + i * 3] = (steps + 1) * (steps / 2 - 1) + 2;
-        indices[((steps + 1) * (steps / 2 - 1) * 6) + i * 3 + 1] =  i + 1;
-        indices[((steps + 1) * (steps / 2 - 1) * 6) + i * 3 + 2] = 0;
-
     }
     for (int i = 1; i < (steps / 2) - 1; i++)
     {
@@ -70,11 +61,6 @@ Food::Food(double radius_, int steps_, float x, float y)
             indices[(steps + 1) * 3 + ((i - 1) * (steps + 1) * 6) + j * 6 + 3] = 1 + (steps + 1) * (i - 1) + j + 1;
             indices[(steps + 1) * 3 + ((i - 1) * (steps + 1) * 6) + j * 6 + 4] = 1 + (steps + 1) * i + j;
             indices[(steps + 1) * 3 + ((i - 1) * (steps + 1) * 6) + j * 6 + 5] = 1 + (steps + 1) * i + j + 1;
-
-            indices[((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * i * 3) + j * 3] = 1 + (steps + 1) * (i - 1) + j;
-            indices[((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * i * 3) + j * 3 + 1] = 1 + (steps + 1) * i + j;
-            indices[((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * i * 3) + j * 3 + 2] = (steps + 1) * (steps / 2 - 1) + 2;
-
         }
     }
 
@@ -83,10 +69,6 @@ Food::Food(double radius_, int steps_, float x, float y)
         indices[(steps + 1) * 3 + (((steps / 2) - 1 - 1) * (steps + 1) * 6) + i * 3] = 1 + (steps + 1) * ((steps / 2) - 2) + i;
         indices[(steps + 1) * 3 + (((steps / 2) - 1 - 1) * (steps + 1) * 6) + i * 3 + 1] = 1 + (steps + 1) * ((steps / 2) - 2) + i + 1;
         indices[(steps + 1) * 3 + (((steps / 2) - 1 - 1) * (steps + 1) * 6) + i * 3 + 2] = 1 + (steps + 1) * ((steps / 2) - 1);
-
-        indices[((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * (steps / 2 - 1) * 3) + i * 3] = (steps + 1) * (steps / 2 - 1) + 2;
-        indices[((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * (steps / 2 - 1) * 3) + i * 3 + 1] = 1 + (steps + 1) * (steps / 2 - 2) + i;
-        indices[((steps + 1) * (steps / 2 - 1) * 6) + ((steps + 1) * (steps / 2 - 1) * 3) + i * 3 + 2] = (steps + 1) * (steps / 2 - 1) + 1;
     }
 
     vao.Bind();

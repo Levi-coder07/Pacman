@@ -25,9 +25,10 @@ protected:
 public:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
-    bool touched;
+
 	VAO vao;
-    glm::vec3 centerPoint;
+
+    glm::vec3 center_point;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;

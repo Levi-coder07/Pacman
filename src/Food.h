@@ -21,13 +21,13 @@ class Food
 {
 private:
     int steps;
-    
+    double radius;
 public:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
 
 	VAO vao;
-    double radius;
+
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;

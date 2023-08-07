@@ -1,9 +1,8 @@
 #include "Ghost.h"
 
 
-Ghost::Ghost(double radius_, int steps_, float x, float y)
+Ghost::Ghost(double radius_, int steps_, float x, float y, float map_size)
 {
-    this->touched = false;
     this->radius = radius_;
     this->steps = steps_;
     this->speed = 0.01f;
@@ -14,6 +13,9 @@ Ghost::Ghost(double radius_, int steps_, float x, float y)
     this->rotation = glm::vec3(0.f);
     rotation.x = -90.f;
     this->scale = glm::vec3(1.f);
+    this->maze_pos_x = round(position.x / (map_size * 2));
+    this->maze_pos_y = round(position.y / (map_size * 2));
+
 
     const float angle = 3.1415926 * 2.f / steps;
     vertices[0].pos.x = radius * sin(0); 
@@ -132,49 +134,44 @@ Ghost::~Ghost()
 
 }
 
-void Ghost::move(std::vector<std::string> matrix, float map_size)
+bool Ghost::check_colission(std::vector<Blocc*> &blocks,glm::vec3 direction, float map_size)
 {
-    int x = position.x / (map_size * 2);
-    int y = position.y / (map_size * 2);
-
-    std::vector<std::vector<int>> posibles;
-    
-    if (x > 0 && matrix[x - 1][y] != '#')
+    bool touch = true;
+    glm::vec3 half_extents = glm::vec3(map_size, map_size, map_size);
+    for(int i = 0; i < blocks.size(); i++)
     {
-        posibles.push_back({-1, 0});
-    }
-    if (x < matrix.size() - 1 && matrix[x + 1][y] != '#')
-    {
-        posibles.push_back({1, 0});
-    }
-    if (y > 0 && matrix[x][y - 1] != '#')
-    {
-        posibles.push_back({0, -1});
-    }
-    if (y < matrix[x].size() - 1 && matrix[x][y + 1] != '#')
-    {
-        posibles.push_back({0, 1});
-    }
-
-    if (posibles.size() == 2 && (posibles[0][0] * - 1) == posibles[1][0] && (posibles[0][1] * - 1) == posibles[1][1])
-    {
-        if (prev_mov[0] == 0 && prev_mov[1] == 0)
+        glm::vec3 difference = (this->position + direction) - blocks[i]->center_point;
+        glm::vec3 clamped = glm::clamp(difference, -half_extents, half_extents);
+        glm::vec3 closest = blocks[i]->center_point + clamped;
+        difference = closest - (this->position + direction);
+        if(glm::length(difference) <= (this->radius * this->scale.x))
         {
-            prev_mov = posibles[0];
+            touch = false;
         }
-        position.x += (float)prev_mov[0] * speed;
-        position.y += (float)prev_mov[1] * speed;
+    }
+    return touch;
+}   
+
+void Ghost::move(Maze & map, float map_size)
+{
+    std::vector<std::vector<int>> posibles = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+
+    if (prev_mov[0] == 0 && prev_mov[1] == 0)
+    {
+        prev_mov = posibles[0];
+    }
+    
+    glm::vec3 direction(speed * prev_mov[0], speed * prev_mov[1], 0.0f);
+
+    if (check_colission(map.blocks, direction, map_size))
+    {
+        position += direction;
     }
     else
     {
         int index = std::rand() % posibles.size();
-
-        position.x += (float)posibles[index][0] * speed;
-        position.y += (float)posibles[index][1] * speed;
-
         prev_mov = posibles[index];
     }
-
 }
 
 void Ghost::draw(Shader &shaderProgram)
