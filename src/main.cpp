@@ -25,8 +25,8 @@ const char * fragment_texshader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final
 const char * vertex_text_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\text_shader.vert";
 const char * fragment_text_shader_file = "C:\\Users\\Levi\\Downloads\\Pacman_Final\\src\\text_shader.frag";
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 800;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 1000;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -141,7 +141,7 @@ int main()
 		// Take care of all GLFW events
 		glfwPollEvents();
 		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		glClearColor(0.f, 0.f, 0.f, 1.0f);
 		// Clean the back buffer and assign the new color to it
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 		// Tell OpenGL which Shader Program we want to use

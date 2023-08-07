@@ -14,7 +14,7 @@ Pacman::Pacman(double radius_, int steps_)
     this->position = glm::vec3(0.4f,0.4f,0.f);
     this->rotation = glm::vec3(0.f);
     this->scale = glm::vec3(1.f);
-
+    
     const float angle = 3.1415926 * 2.f / steps;
     vertices[0].pos.x = radius * sin(0); 
     vertices[0].pos.y = -radius * cos(0); 

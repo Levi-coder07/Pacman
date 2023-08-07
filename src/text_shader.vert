@@ -10,7 +10,7 @@ void main()
         gl_Position = projection* vec4(vertex.xy, 0.0f, 1.0f);
         TexCoords = vertex.zw;
     }else{
-        gl_Position = camMatrix * model* vec4(vertex.xy, 0.25f, 1.0f);
+        gl_Position = camMatrix * model* vec4(vertex.xy, 0.6f, 1.0f);
         TexCoords = vertex.zw;
     }
     

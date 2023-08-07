@@ -1,10 +1,10 @@
 #include "Level.h"
-
+#include <algorithm>
 Level::Level(glm::vec3 start_pos, std::vector<std::string> matrix)
 {
 	std::vector<Texture> textures = { Texture("C:\\Users\\Levi\\Downloads\\Pacman_Final\\Textures\\pared.jpg", 0 ,GL_RGB, GL_UNSIGNED_BYTE)};
     
-	text_renderer = new TextRenderer(800,800);
+	text_renderer = new TextRenderer(1200,1000);
     this->text_renderer->Load("C:\\Users\\Levi\\Downloads\\Pacman_Final\\fonts\\OCRAEXT.TTF", 24);
 
     this->map = new Maze(matrix, 0.2, textures);
@@ -26,6 +26,8 @@ Level::Level(glm::vec3 start_pos, std::vector<std::string> matrix)
             }
         }
     }
+	this->food_eat.assign(food_vector.size(),false);
+	this->ghosts_t.assign(ghosts.size(),false);
 }
 
 void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & texture_shader, Shader&text_shader, Camera & camera)
@@ -36,14 +38,51 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	camera.Matrix(color_shader, "camMatrix");
 	camera.Matrix(texture_shader, "camMatrix");
 	camera.Matrix(text_shader,"camMatrix");
-
+	
 	if(!startGame){
 		glDepthMask(GL_FALSE);
-		text_renderer->RenderText("PRESS P TO",-0.5,0, 0.020f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
-		text_renderer->RenderText("START GAME",-0.5,-0.5, 0.020f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("PACMAN 3D",-1.55,0.3, 0.023f,text_shader, glm::vec3(0.0f, 1.0f, 0.0f));
+		text_renderer->RenderText("PRESS P TO",-1.15,-0.2, 0.015f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("START GAME",-1.15,-0.7, 0.015f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("INSTRUCTIONS",-0.95, -1.2, 0.010f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("MADE BY LEVI , MOISES , EDSON - UNSA ", 15.f, 15.0f, 1.3f,text_shader, glm::vec3(1.0f, 1.0f, 1.0f));
 		glDepthMask(GL_TRUE);
 		if(glfwGetKey(window,GLFW_KEY_P)==GLFW_PRESS){
 			startGame=true;
+		}
+		if(glfwGetKey(window,GLFW_KEY_I)==GLFW_PRESS){
+			instruccion=true;
+			startGame=true;
+		}
+	}else if(instruccion){
+		glDepthMask(GL_FALSE);
+		startGame = true;
+		text_renderer->RenderText("PRESS A -> LEFT",-1.3, 0.3, 0.012f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("PRESS D -> RIGHT",-1.3, -0.2, 0.012f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("PRESS W -> UP",-1.3, -0.7, 0.012f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("PRESS S -> DOWN",-1.3, -1.2, 0.012f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		glDepthMask(GL_TRUE);
+		if(glfwGetKey(window,GLFW_KEY_L)==GLFW_PRESS){
+			instruccion=false;
+			startGame=true;
+			
+		}
+
+	}
+
+	else if(game_over){
+		text_renderer->RenderText("GAME", -0.2, pacman->position.y-0.4, 0.035f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("OVER!", -0.2, pacman->position.y-1.1, 0.035f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		
+		text_renderer->RenderText("PRESS R TO RESTART!", 0, pacman->position.y-1.3, 0.005f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		if(glfwGetKey(window,GLFW_KEY_R)==GLFW_PRESS){
+			instruccion=false;
+			startGame=false;
+			game_over=false;
+			this->food_eat.assign(food_eat.size(),false);
+			this->ghosts_t.assign(ghosts_t.size(),false);
+			pacman->pointCounter = 0;
+			pacman->position = glm::vec3(0.4f, 0.4f, 0.0f);
 		}
 	}else{
 	this->pacman->updateInput(window,map->blocks);
@@ -59,23 +98,23 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	{
 		ghosts[i]->move(this->map->matrix, this->map->map_size);
 		ghosts[i]->draw(color_shader);
-		if(!ghosts[i]->touched){
+		if(!ghosts_t[i]){
 			double distancia = glm::distance(ghosts[i]->position,pacman->position);
 			if (distancia <= pacman->radius + ghosts[i]->radius)
 			{
 				
 				std::cout << "COLISION CON GHOST" << std::endl;
-				ghosts[i]->touched = true;
+				ghosts_t[i] = true;
 			}
 			
 		}else{
-			text_renderer->RenderText("GAME OVER", pacman->position.x-1.8, pacman->position.y-0.4, 0.025f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+			game_over = true;
 		}
 	}
     for (int i = 0; i < food_vector.size(); i++) 
 	{
 		// Render the ball
-		if (!food_vector[i]->is_eaten)
+		if (!food_eat[i])
 		{
 			double dist = glm::distance(food_vector[i]->position, pacman->position);
 			if (dist >= pacman->radius + food_vector[i]->radius)
@@ -86,7 +125,7 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 			{
 				std::cout << "COLISION" << std::endl;
 				pacman->pointCounter++;
-				food_vector[i]->is_eaten = true;
+				food_eat[i] = true;
 			}
 		}
 	}
