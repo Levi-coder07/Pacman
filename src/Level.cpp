@@ -37,13 +37,15 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 	camera.Matrix(texture_shader, "camMatrix");
 	camera.Matrix(text_shader,"camMatrix");
 
-	/*if(!startGame){
-
-		text_renderer->RenderText("GAME OVER",0,0, 0.025f,texture_shader, glm::vec3(1.0f, .0f, 0.0f));
+	if(!startGame){
+		glDepthMask(GL_FALSE);
+		text_renderer->RenderText("PRESS P TO",-0.5,0, 0.020f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		text_renderer->RenderText("START GAME",-0.5,-0.5, 0.020f,text_shader, glm::vec3(1.0f, .0f, 0.0f));
+		glDepthMask(GL_TRUE);
 		if(glfwGetKey(window,GLFW_KEY_P)==GLFW_PRESS){
 			startGame=true;
 		}
-	}*/
+	}else{
 	this->pacman->updateInput(window,map->blocks);
 
     this->pacman->draw(color_shader);
@@ -89,5 +91,5 @@ void Level::render_level(GLFWwindow * window, Shader & color_shader, Shader & te
 		}
 	}
 
-	
+	}
 }

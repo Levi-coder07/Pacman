@@ -115,11 +115,16 @@ Pacman::~Pacman()
 }
 bool Pacman::CheckColission(std::vector<Blocc*> &blocks,glm::vec3 direction){
     bool touch = true;
+    glm::vec3 HalfExtents = glm::vec3(0.2f,0.2f,0.2f);
     for(int i =0;i<blocks.size();i++){
-            if(glm::distance(blocks[i]->centerPoint,this->position+direction)<=this->radius+0.2)
-            {
+        glm::vec3 difference = (this->position + direction) - blocks[i]->centerPoint;
+        glm::vec3 clamped = glm::clamp(difference,-HalfExtents,HalfExtents);
+        glm::vec3 closest = blocks[i]->centerPoint + clamped;
+        difference = closest - (this->position + direction);
+        if(glm::length(difference) <= this->radius)
+        {
                 touch = false;
-            }
+        }
         }
     return touch;
 }
@@ -142,7 +147,7 @@ void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks)
     }
     else if (glfwGetKey(window,GLFW_KEY_D) == GLFW_PRESS)
     {
-         glm::vec3 direction(speedX,0,0);
+        glm::vec3 direction(speedX,0,0);
         bool touch = this->CheckColission(blocks,direction);
         
         if(touch){
@@ -180,15 +185,16 @@ void Pacman::updateInput(GLFWwindow * window,std::vector<Blocc*> blocks)
     }
     else if (glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
     {
+       
          glm::vec3 direction(0,-speedY,0);
         bool touch = this->CheckColission(blocks,direction);
         
         if(touch){
              position.y -= speedY;
-         rotation = glm::vec3(0.f, 0.f, 90.f);
+         rotation = glm::vec3(0.f, 0.f, -90.f);
         }else{
             position.y -= 0;
-            rotation = glm::vec3(0.f, 0.f, 90.f);
+            rotation = glm::vec3(0.f, 0.f,-90.f);
         }
     }
 }
