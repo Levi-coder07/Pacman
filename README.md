@@ -1,1 +1,1 @@
-PACMAN GAME using OPENGL 
+**PACMAN GAME using OPENGL**
